@@ -412,7 +412,7 @@ export default function Home() {
                   className="botao-adicionar"
                   onClick={() => addItem(categoria)}
                 >
-                  <FaPlus />
+                  <FaPlus /> Item
                 </button>
               </div>
             )}
