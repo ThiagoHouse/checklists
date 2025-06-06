@@ -304,17 +304,31 @@ export default function Home() {
   return (
     <div className="container">
       <div style={{ marginBottom: 12, textAlign: "center" }}>
-        <label style={{ fontWeight: 500, marginRight: 8 }}>Tipo de Checklist:</label>
-        <select
-          value={tipoAtual}
-          onChange={e => setTipoAtual(e.target.value as TipoChecklist)}
-          style={{ fontSize: "1em", padding: "2px 8px" }}
-        >
-          {tiposChecklist.map(tipo => (
-            <option key={tipo} value={tipo}>{tipo}</option>
-          ))}
-        </select>
-      </div>
+  <label style={{ fontWeight: 500, marginRight: 8 }}>Tipo de Checklist:</label>
+  <select
+    value={tipoAtual}
+    onChange={e => setTipoAtual(e.target.value as TipoChecklist)}
+    style={{
+      fontSize: "1em",
+      padding: "6px 16px",
+      borderRadius: 8,
+      border: "1px solid #2d7a2d",
+      background: "#f8fff8",
+      color: "#2d7a2d",
+      fontWeight: 600,
+      outline: "none",
+      boxShadow: "0 1px 4px #0001",
+      cursor: "pointer",
+      transition: "border 0.2s"
+    }}
+    onFocus={e => (e.currentTarget.style.border = "1.5px solid #1e4d1e")}
+    onBlur={e => (e.currentTarget.style.border = "1px solid #2d7a2d")}
+  >
+    {tiposChecklist.map(tipo => (
+      <option key={tipo} value={tipo}>{tipo}</option>
+    ))}
+  </select>
+</div>
 
       {/* <h1 style={{
         textAlign: "center",
