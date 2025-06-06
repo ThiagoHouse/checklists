@@ -1,0 +1,182 @@
+@import url('https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;600;700&family=Poppins:wght@400;600;700&display=swap');/* @import "tailwindcss"; */
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  /* --font-sans: var(--font-geist-sans); */
+  --font-mono: var(--font-geist-mono);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+body {
+  font-family: 'Comfortaa', Arial, Helvetica, sans-serif !important;
+  background-color: #f3f7fa;
+  background-image: url("data:image/svg+xml;utf8,<svg width='120' height='120' viewBox='0 0 120 120' fill='none' xmlns='http://www.w3.org/2000/svg'><g opacity='0.08'><rect x='10' y='10' width='40' height='20' rx='5' fill='%2352a0e0'/><rect x='70' y='70' width='30' height='30' rx='8' fill='%23a46feb'/></g></svg>");
+  background-repeat: repeat;
+  background-size: 180px 180px;
+  margin: 0;
+  padding: 0 8px;
+  color: #3d3f46;
+}
+
+@media (min-width: 600px) {
+  body {
+    padding: 0;
+    /* Remove o padding lateral em telas grandes */
+  }
+}
+
+.lista-compras-item span {
+  margin-left: 8px;
+}
+
+.lista-compras-lista {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.lista-compras-item {
+  font-family: 'Comfortaa', Arial, Helvetica, sans-serif !important;
+
+  display: flex;
+  align-items: center;
+  margin-bottom: 1px;
+  /* Menos espaçamento */
+  padding: 0px 0;
+  padding-right: 12px;
+  border-bottom: 1px solid #eee;
+  font-size: 16px;
+  background: #fff;
+  border-radius: 3px;
+}
+
+.lista-compras-item span::before {
+  content: "•";
+  display: inline-block;
+  margin-right: 8px;
+  color: #3d3f46;
+  /* escolha a cor que preferir */
+  font-size: 1.1em;
+}
+
+.lista-compras-item:last-child {
+  border-bottom: none;
+}
+
+.lista-compras-item.checked span {
+  text-decoration: line-through;
+  color: #888;
+}
+
+.lista-compras-item input[type="checkbox"] {
+  margin-right: 1px;
+}
+
+input {
+    font-family: 'Comfortaa', Arial, Helvetica, sans-serif !important;
+    margin: 8px 8px;
+}
+
+.lista-compras-item button {
+  margin-left: 4px;
+  padding: 4px 15px;
+  font-size: 14px;
+  background: #e3e3e3;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.botao-adicionar {
+  margin-left: 4px;
+  padding: 2px 8px;
+  margin: 8px;
+  font-size: 14px;
+  background: #52a0e0;
+  border: none;
+  border-radius: 3px;
+  color: #fff;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.adicionar-container {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  margin-bottom: 0;
+}
+
+.lista-compras-item button:hover {
+  background: #d1d1d1;
+}
+
+.input {
+  font-size: 14px;
+  border-radius: 8px;
+  border: 1px solid #52a0e0;
+}
+
+.categoria-titulo {
+    font-family: 'Poppins', Arial, Helvetica, sans-serif !important;
+
+  font-weight: bold;
+  font-size: 16px;
+  margin-bottom: 2px;
+  margin-top: 20px;
+  color: #52a0e0;
+}
+
+/* Adicione ao seu globals.css */
+.container {
+  max-width: 500px;
+  margin: 10px auto;
+  padding: 0 16px;
+  /* font-family: sans-serif; */
+}
+
+.botao-adicionar {
+  padding: 6px 16px;
+  /* aumente conforme desejar */
+  font-size: 12px;
+}
+
+.botao-editar {
+  background: #e6f0ff;
+  color: #2563eb;
+}
+
+.botao-editar:hover {
+  background: #dbeafe;
+}
+
+.botao-remover {
+  background: #ffe6e6;
+  color: #dc2626;
+}
+
+.botao-remover:hover {
+  background: #fecaca;
+}
+
+h1 {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 16px;
+  text-align: center;
+  color: #a46feb;
+  font-family: 'Comfortaa', Arial, Helvetica, sans-serif;
+}
