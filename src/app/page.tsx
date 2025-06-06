@@ -316,7 +316,7 @@ export default function Home() {
         </select>
       </div>
 
-      <h1 style={{
+      {/* <h1 style={{
         textAlign: "center",
         marginTop: 8,
         marginBottom: 8,
@@ -326,7 +326,7 @@ export default function Home() {
         letterSpacing: "1px",
       }}>
         {`Checklist de ${tipoAtual}`}
-      </h1>
+      </h1> */}
 
       <div style={{ textAlign: "right", marginBottom: 2 }}>
         <label style={{ cursor: "pointer", fontWeight: 500, fontSize: "0.8em" }}>
