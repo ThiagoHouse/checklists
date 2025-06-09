@@ -236,25 +236,27 @@ export default function Home() {
     setEditingText("");
   };
 
-  // Função para remover categoria (só se não tiver itens)
-  const removerCategoria = (categoria: string) => {
-    if ((items[categoria]?.length ?? 0) > 0) return;
-    setChecklists(prev => ({
-      ...prev,
-      [tipoAtual]: {
-        ...prev[tipoAtual],
-        categorias: prev[tipoAtual].categorias.filter(cat => cat !== categoria),
-        items: Object.fromEntries(
-          Object.entries(prev[tipoAtual].items).filter(([cat]) => cat !== categoria)
-        )
-      }
-    }));
-    setNewItems(prev => {
-      const novo = { ...prev };
-      delete novo[categoria];
-      return novo;
-    });
-  };
+  // Função para remover categoria (só se não tiver itens) com confirmação
+const removerCategoria = (categoria: string) => {
+  if ((items[categoria]?.length ?? 0) > 0) return;
+  const confirm = window.confirm("Tem certeza que deseja excluir esta categoria?");
+  if (!confirm) return;
+  setChecklists(prev => ({
+    ...prev,
+    [tipoAtual]: {
+      ...prev[tipoAtual],
+      categorias: prev[tipoAtual].categorias.filter(cat => cat !== categoria),
+      items: Object.fromEntries(
+        Object.entries(prev[tipoAtual].items).filter(([cat]) => cat !== categoria)
+      )
+    }
+  }));
+  setNewItems(prev => {
+    const novo = { ...prev };
+    delete novo[categoria];
+    return novo;
+  });
+};
 
   // Salvar edição de categoria
   const salvarNomeCategoria = (categoriaAntiga: string) => {
