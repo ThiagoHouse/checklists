@@ -236,6 +236,26 @@ export default function Home() {
     setEditingText("");
   };
 
+  // Função para remover categoria (só se não tiver itens)
+  const removerCategoria = (categoria: string) => {
+    if ((items[categoria]?.length ?? 0) > 0) return;
+    setChecklists(prev => ({
+      ...prev,
+      [tipoAtual]: {
+        ...prev[tipoAtual],
+        categorias: prev[tipoAtual].categorias.filter(cat => cat !== categoria),
+        items: Object.fromEntries(
+          Object.entries(prev[tipoAtual].items).filter(([cat]) => cat !== categoria)
+        )
+      }
+    }));
+    setNewItems(prev => {
+      const novo = { ...prev };
+      delete novo[categoria];
+      return novo;
+    });
+  };
+
   // Salvar edição de categoria
   const salvarNomeCategoria = (categoriaAntiga: string) => {
     const novoNome = novoNomeCategoria.trim();
@@ -304,43 +324,31 @@ export default function Home() {
   return (
     <div className="container">
       <div style={{ marginBottom: 12, textAlign: "center" }}>
-  <label style={{ fontWeight: 500, marginRight: 8 }}>Tipo de Checklist:</label>
-  <select
-    value={tipoAtual}
-    onChange={e => setTipoAtual(e.target.value as TipoChecklist)}
-    style={{
-      fontSize: "1em",
-      padding: "6px 16px",
-      borderRadius: 8,
-      border: "1px solid #2d7a2d",
-      background: "#f8fff8",
-      color: "#2d7a2d",
-      fontWeight: 600,
-      outline: "none",
-      boxShadow: "0 1px 4px #0001",
-      cursor: "pointer",
-      transition: "border 0.2s"
-    }}
-    onFocus={e => (e.currentTarget.style.border = "1.5px solid #1e4d1e")}
-    onBlur={e => (e.currentTarget.style.border = "1px solid #2d7a2d")}
-  >
-    {tiposChecklist.map(tipo => (
-      <option key={tipo} value={tipo}>{tipo}</option>
-    ))}
-  </select>
-</div>
-
-      {/* <h1 style={{
-        textAlign: "center",
-        marginTop: 8,
-        marginBottom: 8,
-        fontFamily: "inherit",
-        fontWeight: 700,
-        fontSize: "1.2em",
-        letterSpacing: "1px",
-      }}>
-        {`Checklist de ${tipoAtual}`}
-      </h1> */}
+        <label style={{ fontWeight: 500, marginRight: 8 }}>Tipo de Checklist:</label>
+        <select
+          value={tipoAtual}
+          onChange={e => setTipoAtual(e.target.value as TipoChecklist)}
+          style={{
+            fontSize: "1em",
+            padding: "6px 16px",
+            borderRadius: 8,
+            border: "1px solid #2d7a2d",
+            background: "#f8fff8",
+            color: "#2d7a2d",
+            fontWeight: 600,
+            outline: "none",
+            boxShadow: "0 1px 4px #0001",
+            cursor: "pointer",
+            transition: "border 0.2s"
+          }}
+          onFocus={e => (e.currentTarget.style.border = "1.5px solid #1e4d1e")}
+          onBlur={e => (e.currentTarget.style.border = "1px solid #2d7a2d")}
+        >
+          {tiposChecklist.map(tipo => (
+            <option key={tipo} value={tipo}>{tipo}</option>
+          ))}
+        </select>
+      </div>
 
       <div style={{ textAlign: "right", marginBottom: 2 }}>
         <label style={{ cursor: "pointer", fontWeight: 500, fontSize: "0.8em" }}>
@@ -395,17 +403,32 @@ export default function Home() {
               >
                 {categoria}
                 {modoEdicao && (
-                  <button
-                    style={{ marginLeft: 8, fontSize: 14, padding: "2px 8px" }}
-                    onClick={e => {
-                      e.stopPropagation();
-                      setCategoriaEditando(categoria);
-                      setNovoNomeCategoria(categoria);
-                    }}
-                    title="Editar nome da categoria"
-                  >
-                    <FaEdit />
-                  </button>
+                  <>
+                    <button
+                      style={{ marginLeft: 8, fontSize: 14, padding: "2px 8px" }}
+                      onClick={e => {
+                        e.stopPropagation();
+                        setCategoriaEditando(categoria);
+                        setNovoNomeCategoria(categoria);
+                      }}
+                      title="Editar nome da categoria"
+                    >
+                      <FaEdit />
+                    </button>
+                    {/* Botão de remover categoria, só aparece se não tiver itens */}
+                    {(!items[categoria] || items[categoria].length === 0) && (
+                      <button
+                        style={{ marginLeft: 8, fontSize: 14, padding: "2px 8px", color: "#b00" }}
+                        onClick={e => {
+                          e.stopPropagation();
+                          removerCategoria(categoria);
+                        }}
+                        title="Excluir categoria (apenas se vazia)"
+                      >
+                        <FaTrash />
+                      </button>
+                    )}
+                  </>
                 )}
               </h2>
             )}
