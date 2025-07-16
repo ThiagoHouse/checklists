@@ -132,13 +132,27 @@ export default function Home() {
     if (saved) {
       setChecklists(JSON.parse(saved));
     }
-    // Ativa modo edição se não houver nenhum item no checklist atual
-    const nenhumItem = Object.values(checklists[tipoAtual]?.items || {}).every(lista => lista.length === 0);
-    setModoEdicao(nenhumItem);
-    // Atualiza os campos de novo item para as categorias do tipo atual
-    setNewItems(getEmptyNewItems(checklists[tipoAtual]?.categorias || categoriasPadrao[tipoAtual]));
-    // eslint-disable-next-line
   }, []);
+
+  useEffect(() => {
+    if (!isClient) return;
+
+    const atualTemItens = Object.values(checklists[tipoAtual]?.items || {}).some(lista => lista.length > 0);
+
+    setModoEdicao(prev => {
+      // só ativa automaticamente se estava desligado e não há nenhum item
+      if (!prev && !atualTemItens) {
+        return true;
+      }
+      // mantém como está nos outros casos
+      return prev;
+    });
+  }, [tipoAtual, isClient]);
+
+
+  useEffect(() => {
+    setNewItems(getEmptyNewItems(checklists[tipoAtual]?.categorias || categoriasPadrao[tipoAtual]));
+  }, [tipoAtual, checklists]);
 
   // Persistência no localStorage
   useEffect(() => {
@@ -146,11 +160,6 @@ export default function Home() {
       localStorage.setItem("multi-checklists", JSON.stringify(checklists));
     }
   }, [checklists, isClient]);
-
-  // Atualiza os campos de novo item ao trocar de tipo
-  useEffect(() => {
-    setNewItems(getEmptyNewItems(checklists[tipoAtual]?.categorias || categoriasPadrao[tipoAtual]));
-  }, [tipoAtual, checklists]);
 
   // Salva o tipo de checklist atual no localStorage sempre que mudar
   useEffect(() => {
@@ -191,6 +200,7 @@ export default function Home() {
         }
       }
     }));
+    // NÃO muda modoEdicao para evitar sair do modo
   };
 
   // Marcar/desmarcar item
@@ -234,29 +244,30 @@ export default function Home() {
     }
     setEditing({ categoria: null, index: null });
     setEditingText("");
+    // NÃO muda modoEdicao para evitar sair do modo
   };
 
   // Função para remover categoria (só se não tiver itens) com confirmação
-const removerCategoria = (categoria: string) => {
-  if ((items[categoria]?.length ?? 0) > 0) return;
-  const confirm = window.confirm("Tem certeza que deseja excluir esta categoria?");
-  if (!confirm) return;
-  setChecklists(prev => ({
-    ...prev,
-    [tipoAtual]: {
-      ...prev[tipoAtual],
-      categorias: prev[tipoAtual].categorias.filter(cat => cat !== categoria),
-      items: Object.fromEntries(
-        Object.entries(prev[tipoAtual].items).filter(([cat]) => cat !== categoria)
-      )
-    }
-  }));
-  setNewItems(prev => {
-    const novo = { ...prev };
-    delete novo[categoria];
-    return novo;
-  });
-};
+  const removerCategoria = (categoria: string) => {
+    if ((items[categoria]?.length ?? 0) > 0) return;
+    const confirm = window.confirm("Tem certeza que deseja excluir esta categoria?");
+    if (!confirm) return;
+    setChecklists(prev => ({
+      ...prev,
+      [tipoAtual]: {
+        ...prev[tipoAtual],
+        categorias: prev[tipoAtual].categorias.filter(cat => cat !== categoria),
+        items: Object.fromEntries(
+          Object.entries(prev[tipoAtual].items).filter(([cat]) => cat !== categoria)
+        )
+      }
+    }));
+    setNewItems(prev => {
+      const novo = { ...prev };
+      delete novo[categoria];
+      return novo;
+    });
+  };
 
   // Salvar edição de categoria
   const salvarNomeCategoria = (categoriaAntiga: string) => {
