@@ -85,6 +85,7 @@ function getEmptyNewItems(categorias: string[]): { [categoria: string]: string }
 
 export default function Home() {
   const [isClient, setIsClient] = useState(false);
+  const [hasLoaded, setHasLoaded] = useState(false);
 
   // Tipo de checklist selecionado
   const [tipoAtual, setTipoAtual] = useState<TipoChecklist>("Compras");
@@ -117,7 +118,7 @@ export default function Home() {
   // Modo de edição
   const [modoEdicao, setModoEdicao] = useState(false);
 
-  // Carregar do servidor (Postgres via API) no client
+  // Carregar do servidor no client
   useEffect(() => {
     setIsClient(true);
 
@@ -132,6 +133,8 @@ export default function Home() {
         }
       } catch (err) {
         console.error('Erro ao carregar estado do servidor', err);
+      } finally {
+        setHasLoaded(true);
       }
     })();
   }, []);
@@ -156,16 +159,15 @@ export default function Home() {
     setNewItems(getEmptyNewItems(checklists[tipoAtual]?.categorias || categoriasPadrao[tipoAtual]));
   }, [tipoAtual, checklists]);
 
-  // Persistir no servidor (Postgres) quando houver mudanças
+  // Persistir no servidor somente após a carga inicial
   useEffect(() => {
-    if (!isClient) return;
-    // Fire-and-forget; servidor fará upsert do estado
+    if (!isClient || !hasLoaded) return;
     fetch('/api/state', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ data: checklists })
     }).catch(err => console.error('Erro ao salvar estado no servidor', err));
-  }, [checklists, isClient]);
+  }, [checklists, isClient, hasLoaded]);
 
 
   // Adicionar item em uma categoria
