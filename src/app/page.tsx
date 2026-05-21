@@ -149,7 +149,7 @@ export default function Home() {
       // mantém como está nos outros casos
       return prev;
     });
-  }, [tipoAtual, isClient]);
+  }, [tipoAtual, isClient, checklists]);
 
 
   useEffect(() => {
