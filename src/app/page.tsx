@@ -86,16 +86,8 @@ function getEmptyNewItems(categorias: string[]): { [categoria: string]: string }
 export default function Home() {
   const [isClient, setIsClient] = useState(false);
 
-  // Tipo de checklist selecionado (carrega do localStorage se existir)
-  const [tipoAtual, setTipoAtual] = useState<TipoChecklist>(() => {
-    if (typeof window !== "undefined") {
-      const salvo = localStorage.getItem("tipoChecklistAtual");
-      if (salvo && tiposChecklist.includes(salvo as TipoChecklist)) {
-        return salvo as TipoChecklist;
-      }
-    }
-    return "Compras";
-  });
+  // Tipo de checklist selecionado
+  const [tipoAtual, setTipoAtual] = useState<TipoChecklist>("Compras");
 
   // Estado principal de todos os checklists
   const [checklists, setChecklists] = useState<Checklists>(() => {
@@ -125,13 +117,23 @@ export default function Home() {
   // Modo de edição
   const [modoEdicao, setModoEdicao] = useState(false);
 
-  // Carregar do localStorage só no client
+  // Carregar do servidor (Postgres via API) no client
   useEffect(() => {
     setIsClient(true);
-    const saved = localStorage.getItem("multi-checklists");
-    if (saved) {
-      setChecklists(JSON.parse(saved));
-    }
+
+    (async () => {
+      try {
+        const res = await fetch('/api/state');
+        if (res.ok) {
+          const json = await res.json();
+          if (json.data) {
+            setChecklists(json.data);
+          }
+        }
+      } catch (err) {
+        console.error('Erro ao carregar estado do servidor', err);
+      }
+    })();
   }, []);
 
   useEffect(() => {
@@ -154,19 +156,17 @@ export default function Home() {
     setNewItems(getEmptyNewItems(checklists[tipoAtual]?.categorias || categoriasPadrao[tipoAtual]));
   }, [tipoAtual, checklists]);
 
-  // Persistência no localStorage
+  // Persistir no servidor (Postgres) quando houver mudanças
   useEffect(() => {
-    if (isClient) {
-      localStorage.setItem("multi-checklists", JSON.stringify(checklists));
-    }
+    if (!isClient) return;
+    // Fire-and-forget; servidor fará upsert do estado
+    fetch('/api/state', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ data: checklists })
+    }).catch(err => console.error('Erro ao salvar estado no servidor', err));
   }, [checklists, isClient]);
 
-  // Salva o tipo de checklist atual no localStorage sempre que mudar
-  useEffect(() => {
-    if (isClient) {
-      localStorage.setItem("tipoChecklistAtual", tipoAtual);
-    }
-  }, [tipoAtual, isClient]);
 
   // Adicionar item em uma categoria
   const addItem = (categoria: string) => {
